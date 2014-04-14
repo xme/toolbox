@@ -179,7 +179,7 @@ def main():
 			a = shlex.split(c)
 			p = sub.Popen(a, stdout=sub.PIPE, stderr=sub.PIPE)
 			output, errors = p.communicate()
-			e = p.wait()
+			e = p.returncode
 			if debug:
 				print "+++ Command RC: %d" % e
 			if options.output:
@@ -194,12 +194,18 @@ def main():
 					if debug:
 						f.write("--- Started PID %d: %s (%s) ---\n" % 
 							(p.pid, c, time.asctime()))
-					f.write(output)
+					if output:
+						f.write(output)
+					if errors:
+						f.write(errors)
 					if debug:
 						f.write("--- Stopped with exit code: %d (%s) ---\n" % (e, time.asctime()))
 					f.close()
 			else:
-				print output.rstrip()
+				if output:
+					print output.rstrip()
+				if errors:
+					print errors.rstrip()
 	if debug and options.output:
 		if options.split:
 			print "+++ Commands output saved to %s_x_x_x_x" % options.output
