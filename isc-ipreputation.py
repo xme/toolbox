@@ -189,6 +189,8 @@ if __name__ == '__main__':
 				help='enable verbose output')
 	parser.add_option('-c', action='store_true', dest='config',
 				help='specify a configuration file')
+	parser.add_option('-f', action='store_true', dest='force',
+				help='force a new fetch of data from ISC')
 	(options, args) = parser.parse_args()
 
 
@@ -261,6 +263,10 @@ if __name__ == '__main__':
 		# do_fetch = True
 	else:
 		logger.debug('No data found, fetching from ISC')
+		do_fetch = True
+
+	# Force a fetch
+	if options.force:
 		do_fetch = True
 
 	if do_fetch:
