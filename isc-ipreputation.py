@@ -62,6 +62,8 @@ def populate(j):
 	'''
 	Populate JSON data with missing information from ISC
 	'''
+	# Always update the timestamp
+	j['updated']= datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S")
 	if not 'count' in j:
 		j['count'] = 0
 	if not 'attacks' in j:
@@ -72,8 +74,6 @@ def populate(j):
 		j['maxdate']= "1970-01-01"
 	if not 'mindate' in j:
 		j['mindate']= "1970-01-01"
-	if not 'updated' in j:
-		j['updated']= datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S")
 	if not 'abusecontact' in j:
 		j['abusecontact']= ""
 	if not 'comment' in j or not j['comment']:
@@ -324,5 +324,23 @@ if __name__ == '__main__':
 				ls=jsondata['maxdate'],
 				u=jsondata['updated']
 				))
+	else:
+		if options.verbose:
+			# Display the local data
+			logger.debug("Local data not expired")
+			logger.info('IP={i}, AS={a}("{an}"), Network={nw}, Country={co}, Count={nc}, AttackedIP={na}, Trend={t}, FirstSeen={fs}, LastSeen={ls}, Updated={u}'.format(
+				i=IP, 
+				a=jsondata['as'],
+				an=jsondata['asname'],
+				nw=jsondata['network'],
+				co=jsondata['country'],
+				nc=jsondata['count'],
+				na=jsondata['attacks'],
+				t=jsondata['trend'],
+				fs=jsondata['mindate'],
+				ls=jsondata['maxdate'],
+				u=jsondata['updated']
+				))
+		
 	#print json.dumps(jsondata, indent=4, sort_keys=True)
 	exit
