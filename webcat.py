@@ -27,7 +27,7 @@ categoriesFile = '/var/tmp/categories.txt'
 categoriesUrl = 'http://sitereview.bluecoat.com/rest/categoryList?alpha=true'
 
 # Get one here: http://www1.k9webprotection.com/get-k9-web-protection-free
-k9License = 'K936BFEC9A'
+k9License = 'Replace_by_your_own_license'
 
 def fetchCategories(name):
 	""" --------------------------------------- """
