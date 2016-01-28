@@ -22,3 +22,6 @@ Script to de-obfuscate VBA macro from malicious OLE documents.
 Script to collect IP reputation data from the ISC API.
 See https://isc.sans.edu/api/
 The tool can be invoked from the command line or from an OSSEC Active-Response entry.
+
+# webcat.py
+Categorize URLs
