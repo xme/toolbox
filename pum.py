@@ -40,12 +40,16 @@ def getHTTP(url):
 	if not url:
 		return
 
+	# Python 2.7 requires a ssl security context for self-signed certificates
+	context = None
 	if not config['sslCheck']:
-		context = ssl._create_unverified_context()
-	else:
-		context = None
+		context = (hasattr(ssl, '_create_unverified_context')
+			and ssl._create_unverified_context() or None)
 	try:
-		r = urllib2.urlopen(url, context=context)
+		if context:
+			r = urllib2.urlopen(url, context=context)
+		else:
+			r = urllib2.urlopen(url)
 	except urllib2.URLError as e:
 		sys.stderr.write("HTTP request failed: %s\n" % e.reason)
 		return
