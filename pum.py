@@ -25,6 +25,7 @@ import xml.etree.ElementTree as ET
 from urlparse import urlparse
 
 verbose = False
+testmode = False
 config = {
 	'sslCheck': True,
 	'proxyHost': '',
@@ -144,11 +145,23 @@ def deleteURLFromCategory(fw, key, urlCategory, url):
 	if verbose: sys.stdout.write("+++ Removed %s from %s\n" % (url, urlCategory))
 	return
 
+def isWhiteListed(url):
+	""" ----------------------------------------------------------- """
+	""" Check presence of the URL in the local whitelist (txt file) """
+	""" ----------------------------------------------------------- """
+	if not os.path.isfile(whiteList):
+		return False
+	if not url or url in open(whiteList).read():
+		return True
+	return False
+
 def main():
 	global config
 	global verbose
+	global testmode
 	global firewall
 	global urlCategory
+	global whiteList
 
 	parser = argparse.ArgumentParser(
 		description="Manage custom URL categories in a Palo Alto Networks firewall")
@@ -174,6 +187,11 @@ def main():
 		action = 'store_true',
 		dest = 'verbose',
 		help = 'enable verbose output',
+		default = False)
+	parser.add_argument('-t', '--test',
+		action = 'store_true',
+		dest = 'testmode',
+		help = 'enable test mode (do not commit)',
 		default = False)
 	parser.add_argument('-s', '--save',
 		action = 'store_true',
@@ -207,6 +225,10 @@ def main():
 		verbose = True
 		sys.stdout.write("+++ Verbose output enabled\n")
 
+	if args.testmode:
+		testmode = True
+		sys.stdout.write("+++ Test mode enabled (no network traffic)\n")
+
 	# If the URL provided is a dash ("-") we read the URLs from STDIN
 	# and populare the list.
 	if args.urls and args.urls[0] == "-": 
@@ -231,6 +253,7 @@ def main():
 			try:
 				apiKey = c.get(fw, 'apikey')
 				urlCategory = c.get(fw, 'urlcategory')
+				whiteList = c.get('urls', 'whitelist')
 			except:
 				sys.stderr.write("Cannot read configuration for %s (%s)\n" % (fw, args.configFile))
 				exit(1)
@@ -262,13 +285,29 @@ def main():
 				if not d.netloc:
 					sys.stderr.write("Bad URL format: %s (rejected)\n" % url)
 					continue
+
+				# Skip whitelisted URLs
+				if isWhiteListed(url):
+					sys.stderr.write("Whitelisted URL: %s (skipped)\n" % url)
+					continue
+					
+				print "Test: %d" % testmode
 				if args.commandAdd:
-					addURLToCategory(fw, apiKey, urlCategory, d.netloc)
+					if testmode:
+						sys.stdout.write('+++ Test: addURLToCategory(%s, %s, %s, %s)\n' % (fw, apiKey, urlCategory, d.netloc))
+					else:
+						addURLToCategory(fw, apiKey, urlCategory, d.netloc)
 				else:
-					deleteURLFromCategory(fw, apiKey, urlCategory, d.netloc)
+					if testmode:
+						sys.stdout.write('+++ Test: deleteURLFromCategory(%s, %s, %s, %s)\n' % (fw, apiKey, urlCategory, d.netloc))
+					else:
+						deleteURLFromCategory(fw, apiKey, urlCategory, d.netloc)
 
 		if args.commit:
-			commitChanges(fw, apiKey, args.partial)
+			if testmode:
+				sys.stdout.write('+++ Test: commitChanges(%s, %s, %s)\n' % (fw, apiKey, args.partial))
+			else:
+				commitChanges(fw, apiKey, args.partial)
 
 	exit(0)
 
