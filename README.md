@@ -25,3 +25,6 @@ The tool can be invoked from the command line or from an OSSEC Active-Response e
 
 # webcat.py
 Categorize URLs
+
+# mof.py
+Extracts IOC's from MISP and generates a OSSEC rootcheck compatible file
