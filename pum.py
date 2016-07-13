@@ -82,7 +82,7 @@ def commitChanges(fw, key, partial):
 	err_status = xml.get('status')
 	for i in xml.iter(tag='line'):
 		err_msg = i.text.rstrip()
-	if err_status != "sucess":
+	if err_status != "success":
 		sys.stdout.write("ERROR: Cannot commit: %s (code=%s)\n" % (err_msg, err_code))
 	return
 
