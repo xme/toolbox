@@ -54,4 +54,7 @@ for s in sightings:
         }
         j.append(event_data)
 
+# Sort by sightings
+j = sorted(j, key=lambda k: k['sightings'], reverse=True)
+
 print json.dumps(j, indent=4)
