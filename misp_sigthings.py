@@ -26,7 +26,6 @@ for s in sightings:
         data = cur.fetchall()
         event_info = data[0][0]
         event_date = data[0][1]
-        print event_date
 
         cur.execute('SELECT category,type,value1,value2,to_ids FROM attributes WHERE id = "' + attr_id + '"')
         data = cur.fetchall()
