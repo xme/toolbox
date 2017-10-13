@@ -4,13 +4,11 @@
 #
 # Usage:
 #
-# ./xlsxtr.py --rows=start1-[end1],startN-[endN] --cols=start1-[end1],startN-[endN]
+# ./xlsxtr.py --cols=start1-[end1],startN-[endN] --rows=start1-[end1],startN-[endN]
 #             [--workbook|-w <name>]
 #             [--prefix|-p]
-#             [--stop|-s]
-#	          [--max|-m <maxdata>]
 #             [--help|-h]
-#             <file> ...
+#             <-|file>
 #
 # Author: Xavier Mertens <xavier@rootshell.be>
 # Copyright: GPLv3 (http://gplv3.fsf.org)
@@ -33,6 +31,11 @@ def processFile(file, options):
 	""" ----------------------------- """
 	""" Read cells from an Excel file """
 	""" ----------------------------- """
+
+	max = 65535
+	if options.max:
+		max = options.max
+
 	try:
 		xls = load_workbook(filename = file, read_only=True)
 		wb = xls.get_sheet_names()
@@ -58,7 +61,7 @@ def processFile(file, options):
 		if len(c_range) == 1:			# 'A'
 			c_max = c_min
 		elif len(c_range[1]) == 0:		# 'A-'
-			c_max = options.max
+			c_max = max
 		else: 					# A-B
 			c_max = ord(c_range[1])
 		for r in rowRanges:
@@ -67,7 +70,7 @@ def processFile(file, options):
 			if len(r_range) == 1:
 				c_max = c_min
 			elif len(r_range[1]) == 0:
-				r_max = options.max
+				r_max = max
 			else:
 				r_max = int(r_range[1])
 
