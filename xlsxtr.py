@@ -58,17 +58,18 @@ def processFile(file, options):
 	for c in colRanges:
 		c_range = c.split('-')
 		c = c_min = ord(c_range[0])
-		if len(c_range) == 1:			# 'A'
-			c_max = c_min
-		elif len(c_range[1]) == 0:		# 'A-'
-			c_max = max
-		else: 					# A-B
-			c_max = ord(c_range[1])
+
 		for r in rowRanges:
+			if len(c_range) == 1:			# 'A'
+				c_max = c_min
+			elif len(c_range[1]) == 0:		# 'A-'
+				c_max = max
+			else: 					# A-B
+				c_max = ord(c_range[1])
 			r_range = r.split('-')
 			r = r_min = int(r_range[0])
 			if len(r_range) == 1:
-				c_max = c_min
+				r_max = r_min
 			elif len(r_range[1]) == 0:
 				r_max = max
 			else:
