@@ -4,7 +4,7 @@
 #
 # Usage:
 #
-# ./xlsxtr.py --cols=start1-[end1],startN-[endN] --rows=start1-[end1],startN-[endN]
+# ./xlsxtract.py --cols=start1-[end1],startN-[endN] --rows=start1-[end1],startN-[endN]
 #             [--workbook|-w <name>]
 #             [--prefix|-p]
 #             [--help|-h]
