@@ -52,8 +52,14 @@ def processFile(file, options):
 		print("[!] Cannot open workbook '%s'" % options.workbook)
 		return False
 
-	colRanges = options.cols.split(',')
-	rowRanges = options.rows.split(',')
+	if options.cols:
+		colRanges = options.cols.split(',')
+	else:
+		colRanges = ['A-']
+	if options.rows:
+		rowRanges = options.rows.split(',')
+	else:
+		rowRanges = ['1-']
 
 	for c in colRanges:
 		c_range = c.split('-')
@@ -67,7 +73,11 @@ def processFile(file, options):
 			else: 					# A-B
 				c_max = ord(c_range[1])
 			r_range = r.split('-')
-			r = r_min = int(r_range[0])
+			try:
+				r = r_min = int(r_range[0])
+			except:
+				print("[!] Row value is not correct: '%s'" % r_range[0])
+				exit(1)
 			if len(r_range) == 1:
 				r_max = r_min
 			elif len(r_range[1]) == 0:
@@ -78,21 +88,25 @@ def processFile(file, options):
 			while c <= c_max:
 				while r <= r_max:
 					cell = chr(c) + str(r)
-					data = sheet_ranges[cell].value
-					if data == None and options.stop == True:
-						return True
-					if options.prefix == True:
-						print('%s=%s' % (cell, data))
-					else:
-						print(data)
-					r = r +1
+					try:
+						data = sheet_ranges[cell].value
+						if data == None and options.stop == True:
+							return True
+						if options.prefix == True:
+							print('%s=%s' % (cell, data))
+						else:
+							print(data)
+						r = r +1
+					except:
+						print("[!] Cannot read data from cell '%s'" % cell)
+						exit(1)
 				r = r_min
 				c = c + 1
 			c = c_min
 	return True
 
 def main():
-	parser = OptionParser(usage="usage: %prog [options]", version="%prog 1.0")
+	parser = OptionParser(usage="usage: %prog [options] <file> ...", version="%prog 1.0")
 	parser.add_option('-w', '--workbook', dest='workbook', type='string', \
 		help='Workbook to extract data from')
 	parser.add_option('-c', '--cols', dest='cols', type='string', \
